@@ -92,31 +92,31 @@ async function run() {
             const result = await taskCollection.insertOne(request);
             res.send(result)
         });
-        // patch a task (update task state)
+        // Update a task
+        app.put('/tasks/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const update = { $set: req.body };
+
+            const result = await taskCollection.updateOne(query, update);
+            res.send(result);
+
+        });
         app.patch('/tasks/:id', async (req, res) => {
             const id = req.params.id;
-            const newState = req.body.state;
-
-            console.log('Received request to update task state. ID:', id, 'New State:', newState, 'Request Body:', req.body);
-
-            if (!newState || !['To-Do', 'Ongoing', 'Completed'].includes(newState)) {
-                return res.status(400).send({ error: 'Invalid state provided' });
-            }
-
             const query = { _id: new ObjectId(id) };
-            const update = { $set: { state: newState } };
+            const update = { $set: req.body };
 
             try {
                 const result = await taskCollection.updateOne(query, update);
                 res.send(result);
             } catch (error) {
-                console.error(error);
-                res.status(500).send({ error: 'Internal Server Error' });
+                console.error('Error updating task:', error);
+                res.status(500).send({ error: 'Failed to update the task. Please try again.' });
             }
         });
-
         // delete trainerReq
-        app.delete('/bookings/:id', async (req, res) => {
+        app.delete('/tasks/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await taskCollection.deleteOne(query)
