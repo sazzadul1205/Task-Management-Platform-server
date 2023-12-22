@@ -8,6 +8,7 @@ const port = process.env.PORT || 5000;
 // Middle Ware
 app.use(cors({
     origin: [
+        'https://task-manager-ea274.web.app',
         'http://localhost:5173',
     ],
     credentials: true
